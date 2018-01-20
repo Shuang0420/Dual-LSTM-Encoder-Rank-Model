@@ -13,7 +13,7 @@ python setup.py install
  # Usage
 See examples at ``main.py`` for training and ``predict.py`` for inference.
 
-**Arguments: **
+## Arguments: 
 ```$xslt
 usage: main.py [-h] [--mode MODE] [--restore] [--keepAll]
                [--modelTag MODELTAG] [--rootDir ROOTDIR] [--device DEVICE]
