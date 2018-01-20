@@ -1,2 +1,2 @@
-# Dual-Encoder-Rank-Model
+# Dual-LSTM-Encoder-Rank-Model
 Retrieval-Based Conversational Model(Chinese Baike Corpus)
