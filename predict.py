@@ -44,6 +44,31 @@ args_in = '--device gpu0 ' \
           '--mode predict ' \
           '--datasetTag faq --corpus faq'.split()
 
+
+def evalAll(dataset='validation'):
+    # initialize recall dict
+    recall = {1:0, 3:0, 5:0, 10:0, 30:0, 50:0, 100:0, 300:0, 500:0, 700:0, 1000:0}
+
+
+    batches = predData.getFinalEval() if dataset == 'validation' else predData.getFinalEval()
+
+    for batch in batches:
+        ops, feedDict = predictor.step(batch)
+        loss = sess.run(ops, feedDict)
+        # get predict response index
+        lres = list(np.argsort(-loss, axis=-1)[0])
+        # get actual response index
+        label = predictor.response_seqs.tolist().index(batch.response_seqs[0])
+        # get rank
+        rank = lres.index(label)
+        for k in recall.keys():
+            if rank+1 <= k:
+                recall[k] += 1
+
+    for k, v in recall.items():
+        print("top%s: %s" % (k, v/float(len(batches))))
+
+
 if __name__ == "__main__":
     rankbot = Rankbot()
     rankbot.main(args_in)
