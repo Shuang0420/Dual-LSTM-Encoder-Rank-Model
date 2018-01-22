@@ -893,13 +893,8 @@ class RankTextData(TextData):
         return batch
 
 
-    def getFinalEval(self, testing=False):
-        """Whole batch for final test
-
-        Args:
-            samples (list<Obj>): list of samples, each sample is in form of[input, target]
-            dataset: self.validationSamples or self.testingSamples
-            neg_responses (2D array): neg_responses[i][j] the jth response for the ith sample
+    def getFinalEval(self):
+        """Whole batch for final test including training, validation and testing samples
         Return:
             Batch: batch object
         """
@@ -908,7 +903,7 @@ class RankTextData(TextData):
         batches = []
 
 
-        dataSamples = self.testingSamples if testing else self.validationSamples
+        dataSamples = self.predictingSamples
         n_samples = len(dataSamples)
 
 
