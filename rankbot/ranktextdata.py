@@ -23,6 +23,7 @@ from rankbot.corpus.wechatdata import WechatData
 from rankbot.corpus.lightweightdata import LightweightData
 from rankbot.corpus.chatterbot import ChatterbotData
 from rankbot.corpus.baikedata import BaikeData
+from rankbot.corpus.faqdata import FaqData
 
 
 def tqdm_wrap(iterable, *args, **kwargs):
@@ -65,7 +66,8 @@ class TextData:
         ('xiaohuangji', XhjData),
         ('wechat', WechatData),
         ('chatterbot', ChatterbotData),
-        ('baike', BaikeData)
+        ('baike', BaikeData),
+        ('faq', FaqData)
     ])
 
 

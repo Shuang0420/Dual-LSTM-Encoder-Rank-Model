@@ -71,7 +71,7 @@ class Rankbot:
         globalArgs.add_argument('--mode', type=str, default="train",
                                 help='train or predict')
         globalArgs.add_argument('--restore', action='store_true',
-                            help='如果True, 在原有模型基础上训练')
+                            help='If True, restore previous model and continue training')
         globalArgs.add_argument('--keepAll', action='store_true',
                                 help='If this option is set, all saved model will be kept (Warning: make sure you have enough free disk space or increase saveEvery)')
         globalArgs.add_argument('--modelTag', type=str, default=None,
@@ -99,7 +99,7 @@ class Rankbot:
         datasetArgs.add_argument('--vocabularySize', type=int, default=20000,
                                  help='Limit the number of words in the vocabulary (0 for unlimited)')
         datasetArgs.add_argument('--ranksize', type=int, default=20,
-                                 help='验证/测试集负样本大小+1')
+                                 help='Negative responses plus 1')
         datasetArgs.add_argument('--train_frac', type=float, default = 0.8,
                                  help ='percentage of training samples')
         datasetArgs.add_argument('--valid_frac', type=float, default = 0.1,

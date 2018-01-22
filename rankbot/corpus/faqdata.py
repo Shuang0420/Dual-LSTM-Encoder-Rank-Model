@@ -9,11 +9,12 @@ import os.path
 import jieba
 
 """
-Opensource Xiaohuangji Dialogue Corpus
+Opensource FAQ Dialogue Corpus
+Format: Q \t A
 
 """
 
-class XhjData:
+class FaqData:
     """
     """
     def __init__(self, dirName):
@@ -21,17 +22,16 @@ class XhjData:
         Args:
             dirName (string): data directory of xhj data
         """
-        print('creating Xhj obj')
+        print('creating FAQ obj')
 
-        if os.path.isfile(os.path.join(dirName, 'xhj.pkl')):
-            print('loading from xhj.pkl')
+        if os.path.isfile(os.path.join(dirName, 'faq.pkl')):
+            print('loading from faq.pkl')
             import pickle
-            with open(os.path.join(dirName, 'xhj.pkl'),'rb') as f:
+            with open(os.path.join(dirName, 'faq.pkl'),'rb') as f:
                 self.conversations = pickle.load(f)
         else:
             self.conversations = []
-            fileName = os.path.join(dirName, 'xiaohuangji50w_nofenci.conv')
-            # fileName = os.path.join(dirName, 'test.conv')
+            fileName = os.path.join(dirName, 'faq.conv')
             self.loadConversations(fileName)
 
 
@@ -44,29 +44,24 @@ class XhjData:
         """
         with open(fileName, 'r') as f:
             lineID = 0
-            label= None
             for line in f:
                 if lineID<100:
                     print(line)
-                if lineID==0 or label=='E': # next dialogue
-                    label = line[0]
-                    content = line[2:].strip()
-                    content = self.segment(content)
+                parts = line.strip().split('\t')
+                if len(parts)==2:
+                    content = self.segment(parts[0])
                     conversation = [{"text": [content.split('/')]}]
-                else:
-                    label = line[0]
-                    if label!='E':
-                        content = line[2:].strip()
-                        content = self.segment(content)
-                        conversation.append({"text":[content.split('/')]})
-                    else:
-                        self.conversations.append({"lines":conversation})
+                    content = self.segment(parts[1])
+                    conversation.append({"text":[content.split('/')]})
+                    self.conversations.append({"lines":conversation})
                 lineID += 1
         return self.conversations
 
 
     def getConversations(self):
         return self.conversations
+
+
 
     def segment(self, content):
         seg_list = jieba.cut(content, cut_all=False)

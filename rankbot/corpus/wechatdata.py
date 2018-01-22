@@ -9,7 +9,7 @@ import os.path
 import jieba
 
 """
-Opensource Chinese Movie Subtitle  Dialogue Corpus
+Opensource Wechat Dialogue Corpus
 
 """
 
