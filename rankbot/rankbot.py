@@ -231,7 +231,7 @@ class Rankbot:
 
         print('WARNING: ', end='')
 
-        modelName = self._getModelName()
+        modelName = os.path.join(self.modelDir, 'best_model.ckpt.index')
 
         if os.listdir(self.modelDir):
             if not self.args.restore:
@@ -361,17 +361,19 @@ class Rankbot:
 
 
     def mainPredict(self, query, topK=1, mysess=None):
+        res = []
+
         batch = self.evalData.getPredictBatchQuery(query)
 
         ops, feedDict = self.model_predictor.step(batch)
         logits = mysess.run(ops, feedDict)
-        idx = np.argmax(logits, axis=1)
 
         lres = list(np.argsort(-logits, axis=-1))[0]
         for i in lres[:topK]:
-            res = self.model_predictor.response_seqs[int(i)]
-        res = self.model_predictor.response_seqs[int(idx)]
-        return self.evalData.seq2str(res)
+            seq = self.model_predictor.response_seqs[int(i)]
+            res.append(self.evalData.seq2str(seq))
+
+        return res
 
 
 
