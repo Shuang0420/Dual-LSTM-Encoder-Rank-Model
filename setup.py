@@ -8,7 +8,7 @@
 Build the python-aiml Py2/Py3 Chinese version package
 '''
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from rankbot import VERSION
 
@@ -40,9 +40,11 @@ setup_args = dict( name="rankbot",
                    install_requires = [ 'setuptools',
                                         ],
 
-                   packages=[ "rankbot"],
-                   #    package_dir = { 'aiml': 'aiml',
-                   #                    'aiml.script' : 'aiml/script' },
+                    packages = find_packages(),
+
+                #    packages=[ "rankbot", "rankbot.corpus"],
+                    # package_dir = { 'rankbot': 'rankbot',
+                    #                 'rankbot.corpus' : 'rankbot/corpus' },
 
                    include_package_data = False,       # otherwise package_data is not used
                    # package_data={ 'aiml': ['botdata/*',
