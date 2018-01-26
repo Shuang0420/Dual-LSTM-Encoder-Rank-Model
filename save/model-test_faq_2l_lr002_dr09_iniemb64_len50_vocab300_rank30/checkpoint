@@ -1,2 +1,0 @@
-model_checkpoint_path: "/Users/xushuang/sf/chatbot/Dual-LSTM-Encoder-Rank-Model/save/model-test_faq_2l_lr002_dr09_iniemb64_len50_vocab300_rank30/model.ckpt"
-all_model_checkpoint_paths: "/Users/xushuang/sf/chatbot/Dual-LSTM-Encoder-Rank-Model/save/model-test_faq_2l_lr002_dr09_iniemb64_len50_vocab300_rank30/model.ckpt"
