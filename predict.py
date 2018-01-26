@@ -16,37 +16,21 @@ from rankbot.ranktextdata import RankTextData
 import tensorflow as tf
 import numpy as np
 
-# args_in = '--device gpu0 ' \
-#           '--modelTag test_xhj_2l_lr002_dr09_iniemb64_len50_vocab300_rank30 ' \
-#           '--skipLines ' \
-#           '--initEmbeddings ' \
-#           '--embeddingSource news_12g_baidubaike_20g_novel_90g_embedding_64.bin ' \
-#           '--embeddingSize 64 ' \
-#           '--vocabularySize 300 --maxLength 50 ' \
-#           '--filterVocab 3 ' \
-#           '--ranksize 30 ' \
-#           '--learningRate 0.002 --dropout 0.9 ' \
-#           '--saveEvery 20 ' \
-#           '--numEpochs 10 ' \
-#           '--rootDir  /your/path/to/chatbot/Dual-LSTM-Encoder-Rank-Model ' \
-#           '--mode predict ' \
-#           '--datasetTag xiaohuangji --corpus xiaohuangji'.split()
 args_in = '--device gpu0 ' \
-          '--modelTag test_faq_2l_lr002_dr09_iniemb64_len50_vocab300_rank30 ' \
+          '--modelTag test_xhj_2l_lr002_dr09_iniemb64_len50_vocab300_rank30 ' \
           '--skipLines ' \
           '--initEmbeddings ' \
-          '--restore ' \
           '--embeddingSource news_12g_baidubaike_20g_novel_90g_embedding_64.bin ' \
           '--embeddingSize 64 ' \
-          '--vocabularySize 0 --maxLength 50 ' \
-          '--filterVocab 0 ' \
-          '--ranksize 100 ' \
+          '--vocabularySize 300 --maxLength 50 ' \
+          '--filterVocab 3 ' \
+          '--ranksize 30 ' \
           '--learningRate 0.002 --dropout 0.9 ' \
           '--saveEvery 20 ' \
-          '--numEpochs 100 ' \
-          '--rootDir  /home/shuang/sf/chatbot/Dual-LSTM-Encoder-Rank-Model  ' \
+          '--numEpochs 10 ' \
+          '--rootDir  /your/path/to/Dual-LSTM-Encoder-Rank-Model ' \
           '--mode predict ' \
-          '--datasetTag faq --corpus faq'.split()
+          '--datasetTag xiaohuangji --corpus xiaohuangji'.split()
 
 
 def evalAll():
@@ -89,4 +73,4 @@ if __name__ == "__main__":
     rankbot.main(args_in)
     while True:
         print(rankbot.mainPredict(input("> "), mysess=rankbot.sess)[0])
-
+#
