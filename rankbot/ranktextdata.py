@@ -24,6 +24,7 @@ from rankbot.corpus.lightweightdata import LightweightData
 from rankbot.corpus.chatterbot import ChatterbotData
 from rankbot.corpus.baikedata import BaikeData
 from rankbot.corpus.faqdata import FaqData
+from rankbot.corpus.faqaqdata import FaqaqData
 
 
 def tqdm_wrap(iterable, *args, **kwargs):
@@ -67,7 +68,8 @@ class TextData:
         ('wechat', WechatData),
         ('chatterbot', ChatterbotData),
         ('baike', BaikeData),
-        ('faq', FaqData)
+        ('faq', FaqData),
+        ('faqaq', FaqaqData)
     ])
 
 
@@ -376,7 +378,7 @@ class TextData:
 
         def mergeSentences(sentences, fromEnd=False):
             """Merge the sentences until the max sentence length is reached
-            Also decrement id count for unused sentences.
+            Also decrement id count for unused sentences. More for dialog processing.
             Args:
                 sentences (list<list<int>>): the list of sentences for the current line
                 fromEnd (bool): Define the question on the answer. Tricky:
@@ -420,6 +422,9 @@ class TextData:
                 print('inputWords: %s' % inputWords)
             targetWords = mergeSentences(targetWords, fromEnd=False)
             newSamples.append([inputWords, targetWords])
+
+
+
 
         # WARNING: DO NOT FILTER THE UNKNOWN TOKEN !!! Only word which has count==0 ?
 

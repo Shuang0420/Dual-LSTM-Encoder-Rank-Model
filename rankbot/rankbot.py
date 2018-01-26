@@ -46,7 +46,6 @@ class Rankbot:
         self.best_valid_loss = [float('inf'),
                                 float('inf'),
                                 float('inf')]
-
         self.sess = None
 
         self.MODEL_DIR_BASE = 'save/model'
@@ -232,6 +231,8 @@ class Rankbot:
         print('WARNING: ', end='')
 
         modelName = os.path.join(self.modelDir, 'best_model.ckpt.index')
+        self.best_model = os.path.join(self.modelDir, 'best_model.ckpt')
+        print("restore self.best_mdoel %s " % (self.best_model))
 
         if os.listdir(self.modelDir):
             if not self.args.restore:
@@ -240,6 +241,7 @@ class Rankbot:
             elif os.path.exists(modelName): # Restore the model
                 print('Restoring previous model from {}'.format(self.modelDir))
                 self.saver.restore(sess, os.path.join(self.modelDir, 'best_model.ckpt'))
+                self.best_model_saver.restore(sess, os.path.join(self.modelDir, 'best_model.ckpt'))
             else:
                 print('No previous model found, but some files found at {}. Cleaning...'.format(self.modelDir))
                 self.restore=False
@@ -267,6 +269,25 @@ class Rankbot:
         try:
             batches_valid = self.evalData.getValidBatches()
             batches_test = self.evalData.getTestBatches()
+            if self.args.restore:
+                self.valid_losses = [0, 0, 0]
+                for nextEvalBatch in tqdm(batches_valid, desc="Validation"):
+                    ops, feedDict = self.model_valid.step(nextEvalBatch)
+                    assert len(ops)==2
+                    loss, eval_summaries = sess.run(ops, feedDict)
+                    for i in range(3):
+                        self.valid_losses[i] += loss[i]
+
+                self.valid_writer.add_summary(eval_summaries, self.globStep)
+                self.valid_writer.flush()
+
+                for i in range(3):
+                    self.valid_losses[i] = self.valid_losses[i]/len(batches_valid)
+
+                self.best_valid_loss = self.valid_losses[:]
+                print('best_model restored, with best accuracy :%s' % self.valid_losses)
+
+
             for e in range(self.args.numEpochs):
                 print()
                 print("----- Epoch {}/{} ; (lr={}) -----".format(
@@ -293,7 +314,8 @@ class Rankbot:
 
                         # validation pass
                         print('Evaluating on validation data ...')
-                        self.valid_losses = [0,0,0]
+                        self.valid_losses = [0, 0, 0]
+
                         for nextEvalBatch in tqdm(batches_valid, desc="Validation"):
                             ops, feedDict = self.model_valid.step(nextEvalBatch)
                             assert len(ops)==2

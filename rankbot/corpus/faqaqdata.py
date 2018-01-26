@@ -10,11 +10,11 @@ import jieba
 
 """
 Opensource FAQ Dialogue Corpus
-Format: Q \t standQ
+Format: Q \t StandQ \t StandA
 
 """
 
-class FaqData:
+class FaqaqData:
     """
     """
     def __init__(self, dirName):
@@ -22,16 +22,16 @@ class FaqData:
         Args:
             dirName (string): data directory of xhj data
         """
-        print('creating FAQ obj')
+        print('creating FAQaq obj')
 
-        if os.path.isfile(os.path.join(dirName, 'faq.pkl')):
+        if os.path.isfile(os.path.join(dirName, 'faqaq.pkl')):
             print('loading from faq.pkl')
             import pickle
-            with open(os.path.join(dirName, 'faq.pkl'),'rb') as f:
+            with open(os.path.join(dirName, 'faqaq.pkl'),'rb') as f:
                 self.conversations = pickle.load(f)
         else:
             self.conversations = []
-            fileName = os.path.join(dirName, 'faq.conv')
+            fileName = os.path.join(dirName, 'faq_aq.conv')
             self.loadConversations(fileName)
 
 
@@ -47,7 +47,7 @@ class FaqData:
             for line in f:
                 if lineID<100:
                     print(line)
-                parts = line.strip().split('\t')
+                parts = line.strip().split('\t', 1)
                 if len(parts)==2:
                     content = self.segment(parts[0])
                     conversation = [{"text": [content.split('/')]}]
