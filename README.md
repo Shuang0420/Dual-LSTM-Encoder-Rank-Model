@@ -33,7 +33,7 @@ optional arguments:
   -h, --help            show this help message and exit
 
 Global options:
-  --mode MODE           train or predict
+  --mode MODE           train, eval, predict
   --restore             If True, restore previous model and continue training
   --keepAll             If this option is set, all saved model will be kept
                         (Warning: make sure you have enough free disk space or
