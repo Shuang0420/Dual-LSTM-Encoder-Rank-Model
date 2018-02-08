@@ -369,10 +369,10 @@ class Rankbot:
 
 
 
-    def mainPredict(self, mysess=None):
+    def mainPredict(self, query, topK=1, mysess=None):
         res = []
 
-        batch = self.evalData.getFinalEval()
+        batch = self.evalData.getPredictBatchQuery(query)
 
         ops, feedDict = self.model_predictor.step(batch)
         logits = mysess.run(ops, feedDict)

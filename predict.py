@@ -57,10 +57,10 @@ eval_args_in = '--device gpu0 ' \
 if __name__ == "__main__":
     rankbot = Rankbot()
     if len(sys.argv) > 1 and sys.argv[1]=="eval":
+        rankbot.main(eval_args_in)
+    else:
         rankbot.main(pred_args_in)
         while True:
             print(rankbot.mainPredict(input("> "), mysess=rankbot.sess)[0])
-    else:
-        rankbot.main(eval_args_in)
 
 
