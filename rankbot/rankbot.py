@@ -68,7 +68,7 @@ class Rankbot:
         # Global options
         globalArgs = parser.add_argument_group('Global options')
         globalArgs.add_argument('--mode', type=str, default="train",
-                                help='train or predict')
+                                help='train, eval, predict')
         globalArgs.add_argument('--restore', action='store_true',
                             help='If True, restore previous model and continue training')
         globalArgs.add_argument('--keepAll', action='store_true',
@@ -181,7 +181,7 @@ class Rankbot:
                     self.model_valid = Ranker(self.args, self.textData, mode = "valid")
 
                 with tf.name_scope('evluation'):
-                    self.model_test = Ranker(self.args,self.textData,  mode = "eval")
+                    self.model_eval = Ranker(self.args, self.textData,  mode = "eval")
                     self.ckpt_model_saver = tf.train.Saver(name = 'checkpoint_model_saver')
                     self.best_model_saver = tf.train.Saver(name = 'best_model_saver')
 
@@ -203,8 +203,7 @@ class Rankbot:
                 self.saver = tf.train.Saver() # for restore
 
                 # Restore previous model
-                if self.args.mode == "train":
-                    self.managePreviousModel(self.sess)
+                self.managePreviousModel(self.sess)
 
                 # Initialize embeddings with pre-trained word2vec vectors
                 if self.args.initEmbeddings:
@@ -213,6 +212,9 @@ class Rankbot:
                 # Training
                 if self.args.mode=="train":
                     self.mainTrain(self.sess)
+                elif self.args.mode=="eval":
+                    batches_eval = self.evalData.getFinalEval()
+                    self.mainEval(batches_eval, self.sess)
 
 
     def managePreviousModel(self, sess):
@@ -270,23 +272,8 @@ class Rankbot:
             batches_valid = self.evalData.getValidBatches()
             batches_test = self.evalData.getTestBatches()
             if self.args.restore:
-                self.valid_losses = [0, 0, 0]
-                for nextEvalBatch in tqdm(batches_valid, desc="Validation"):
-                    ops, feedDict = self.model_valid.step(nextEvalBatch)
-                    assert len(ops)==2
-                    loss, eval_summaries = sess.run(ops, feedDict)
-                    for i in range(3):
-                        self.valid_losses[i] += loss[i]
-
-                self.valid_writer.add_summary(eval_summaries, self.globStep)
-                self.valid_writer.flush()
-
-                for i in range(3):
-                    self.valid_losses[i] = self.valid_losses[i]/len(batches_valid)
-
-                self.best_valid_loss = self.valid_losses[:]
+                self.mainEval(batches_valid, sess)
                 print('best_model restored, with best accuracy :%s' % self.valid_losses)
-
 
             for e in range(self.args.numEpochs):
                 print()
@@ -345,7 +332,7 @@ class Rankbot:
             self.best_model_saver.restore(sess, self.best_model)
             self.test_losses = [0,0,0]
             for nextTestBatch in tqdm(batches_test, desc = "FinalTest"):
-                ops, feedDict = self.model_test.step(nextTestBatch)
+                ops, feedDict = self.model_eval.step(nextTestBatch)
                 assert len(ops)==2
                 loss, _ = sess.run(ops, feedDict)
                 for i in range(3):
@@ -382,10 +369,10 @@ class Rankbot:
 
 
 
-    def mainPredict(self, query, topK=1, mysess=None):
+    def mainPredict(self, mysess=None):
         res = []
 
-        batch = self.evalData.getPredictBatchQuery(query)
+        batch = self.evalData.getFinalEval()
 
         ops, feedDict = self.model_predictor.step(batch)
         logits = mysess.run(ops, feedDict)
@@ -396,6 +383,27 @@ class Rankbot:
             res.append(self.evalData.seq2str(seq))
 
         return res
+
+
+
+    def mainEval(self, batches, sess=None):
+        self.valid_losses = [0, 0, 0]
+        for nextEvalBatch in tqdm(batches, desc="Evaluation"):
+            ops, feedDict = self.model_valid.step(nextEvalBatch)
+            assert len(ops)==2
+            loss, eval_summaries = sess.run(ops, feedDict)
+            for i in range(3):
+                self.valid_losses[i] += loss[i]
+
+        self.valid_writer.add_summary(eval_summaries, self.globStep)
+        self.valid_writer.flush()
+
+        for i in range(3):
+            self.valid_losses[i] = self.valid_losses[i]/len(batches)
+
+        self.best_valid_loss = self.valid_losses[:]
+        print('Recall on evaluation dataset :%s' % self.valid_losses)
+
 
 
 
